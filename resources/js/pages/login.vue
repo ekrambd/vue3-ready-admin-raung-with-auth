@@ -52,11 +52,11 @@
 </template>
 
 <script setup>
-import { reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useStore } from 'vuex'
+import { reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import { useStore } from 'vuex';
 import { useToast } from 'vue-toast-notification';
-import axios from 'axios'
+import axios from 'axios';
 
 // Reactive form state
 const form = reactive({
@@ -65,8 +65,8 @@ const form = reactive({
 })
 
 // Vue Router and Vuex
-const router = useRouter()
-const store = useStore()
+const router = useRouter();
+const store = useStore();
 
 const toast = useToast();
 
