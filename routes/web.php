@@ -16,3 +16,13 @@ use Illuminate\Support\Facades\Route;
 Route::get('{any}', function () {
     return view('welcome');
 })->where('any', '.*');
+
+// Route::get('/do', function(){
+//     $data = array();
+//     $data['name'] = 'Admin';
+//     $data['role_id'] = 1;
+//     $data['email'] = 'admin@gmail.com';
+//     $data['password'] = bcrypt('123456');
+//     DB::table('users')->insert($data);
+//     return back();
+// });

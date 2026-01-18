@@ -10,20 +10,30 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-    	if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
-	        $user = Auth::user();
-	        $success['token'] = $user->createToken('MyApp')->plainTextToken;
-	        $success['id'] = $user->id;
-	        $success['name'] = $user->name;
-	        $success['email'] = $user->email;
-	        return response()->json(['success' => true, 'message' => 'Successfully Logged In', 'data' => $success]);
-	    }
-	    return response()->json(['success' => false, 'message' => 'Email or Password Invalid', 'data' => ['token' => "", 'id' => 0, 'email' => ""]]);
+    	try
+		{
+			if(Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+				$user = Auth::user();
+				$success['token'] = $user->createToken('MyApp')->plainTextToken;
+				$success['id'] = $user->id;
+				$success['name'] = $user->name;
+				$success['email'] = $user->email;
+				return response()->json(['success' => true, 'message' => 'Successfully Logged In', 'data' => $success]);
+			}
+			return response()->json(['success' => false, 'message' => 'Email or Password Invalid', 'data' => ['token' => "", 'id' => 0, 'email' => ""]]);
+		}catch(Exception $e){
+			return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+		}
     }
 
     public function logout(Request $request)
     {
-    	auth()->user()->tokens()->delete();
-        return response()->json(['success' => true, 'message' => 'successfully logged out!']);
+    	try
+		{
+			auth()->user()->tokens()->delete();
+            return response()->json(['success' => true, 'message' => 'Successfully logged out!']);
+		}catch(Exception $e){
+			return response()->json(['status'=>false, 'code'=>$e->getCode(), 'message'=>$e->getMessage()],500);
+		}
     }
 }
