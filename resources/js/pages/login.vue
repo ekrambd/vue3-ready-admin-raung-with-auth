@@ -13,25 +13,33 @@
                   </div>
                   <form class="user" @submit.prevent="login">
                     <div class="form-group">
-                      <input type="email" class="form-control" id="exampleInputEmail" v-model="form.email" aria-describedby="emailHelp"
-                        placeholder="Enter Email Address" required="">
+                      <input
+                        type="email"
+                        class="form-control"
+                        v-model="form.email"
+                        placeholder="Enter Email Address"
+                        required
+                      >
                     </div>
                     <div class="form-group">
-                      <input type="password" class="form-control" id="exampleInputPassword" placeholder="Password" v-model="form.password" required="">
+                      <input
+                        type="password"
+                        class="form-control"
+                        v-model="form.password"
+                        placeholder="Password"
+                        required
+                      >
                     </div>
                     <div class="form-group">
                       <div class="custom-control custom-checkbox small" style="line-height: 1.5rem;">
                         <input type="checkbox" class="custom-control-input" id="customCheck">
-                        <label class="custom-control-label" for="customCheck">Remember
-                          Me</label>
+                        <label class="custom-control-label" for="customCheck">Remember Me</label>
                       </div>
                     </div>
                     <div class="form-group">
                       <button type="submit" class="btn btn-primary btn-block">Login</button>
                     </div>
-                  
                   </form>
-                  
                 </div>
               </div>
             </div>
@@ -43,43 +51,50 @@
   <!-- Login Content -->
 </template>
 
-<script type="text/javascript">
+<script setup>
+import { reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { useStore } from 'vuex'
+import { useToast } from 'vue-toast-notification';
+import axios from 'axios'
 
-	export default{
-		data(){
-			return{
-				form:{
-					email: '',
-					password: '',
-				},
-			}
-		},
-		methods:{
+// Reactive form state
+const form = reactive({
+  email: '',
+  password: ''
+})
 
-			login(){
-        		axios.post('/api/login/',this.form)
-        		.then((response) => {
-                var success = response.data.success;
-                if(!success)
-                {    
-                	this.$toast.error(response.data.message);
-                }else{
+// Vue Router and Vuex
+const router = useRouter()
+const store = useStore()
 
-                	let token = response.data.data.token;
-                  let store = this.$store;
-                    store.dispatch('setToken',token);
-                	this.$toast.success(response.data.message);
-                	this.$router.push({ name: 'Dashboard' })
-                }
-        		})
-        		.catch(error => {
-				      console.error('Error during logout:', error);
-				    });
-    	   },
-			
-		},
-	}
+const toast = useToast();
+
+// Login function
+const login = async () => {
+  try {
+    const response = await axios.post('/api/login/', form)
+    const { success, message, data } = response.data
+
+    if (!success) {
+      // Show error toast
+      toast.error(message, { position: 'top-right', duration: 1000 });
+      return
+    }
+
+    // Save token in Vuex store
+    store.dispatch('setToken', data.token)
+
+    toast.success(message, { position: 'top-right', duration: 1000 });
+
+    // Redirect to dashboard
+    router.push({ name: 'Dashboard' })
+  } catch (error) {
+    console.error('Login error:', error)
+  }
+}
 </script>
 
-<style>
+<style scoped>
+
 </style>
